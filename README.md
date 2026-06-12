@@ -14,8 +14,8 @@ Vor dem Starten deshalb die Abhängigkeiten installieren, damit es funktioniert.
 
 - Übersicht über mehrere Lernkarten-Sets
 - Detailansicht eines Sets mit umdrehbaren Karten (Frage/Antwort)
-- Navigation über eine Bottom Navigation Bar (Meine Sets, Entdecken, Profil)
-- Seitenmenü (Drawer) mit Zusatzseiten "Info" und "Einstellungen"
+- Navigation über eine Bottom Navigation Bar (Meine Sets, Info, Profil)
+- Seitenmenü (Drawer) mit Zusatzseiten (Entdecken, Einstellungen)
 
 ## App starten
 

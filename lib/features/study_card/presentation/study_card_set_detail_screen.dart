@@ -39,8 +39,8 @@ class StudyCardListScreen extends StatelessWidget {
                   padding: const EdgeInsets.only(bottom: 12),
                   child: FlipCardPlus(
                     direction: Axis.horizontal,
-                    front: cardSide(label: 'FRAGE', text: card.title),
-                    back: cardSide(label: 'ANTWORT', text: card.description),
+                    front: _cardSide(label: 'FRAGE', text: card.title),
+                    back: _cardSide(label: 'ANTWORT', text: card.description),
                   ),
                 );
               },
@@ -51,13 +51,20 @@ class StudyCardListScreen extends StatelessWidget {
     );
   }
 
-  Widget cardSide({required String label, required String text}) {
+  Widget _cardSide({required String label, required String text}) {
     return Container(
       height: 180,
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Colors.deepPurple.shade200,
         borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.shade400,
+            blurRadius: 6,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

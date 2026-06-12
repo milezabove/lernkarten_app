@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:lernkarten_app/features/explore/presentation/explore_screen.dart';
 import '../features/study_card/presentation/study_card_set_list_screen.dart';
 import '../features/info/presentation/info_screen.dart';
 import '../features/profile/presentation/profile_screen.dart';
 import '../features/settings/presentation/settings_screen.dart';
-import '../features/explore/presentation/explore_screen.dart';
 
 class NavigationScreen extends StatefulWidget {
   const NavigationScreen({super.key});
@@ -17,7 +17,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
 
   final screens = const [
     StudyCardSetListScreen(),
-    ExploreScreen(),
+    InfoScreen(),
     ProfileScreen(),
   ];
 
@@ -46,13 +46,15 @@ class _NavigationScreenState extends State<NavigationScreen> {
               ),
             ),
             ListTile(
-              leading: const Icon(Icons.info_outline),
-              title: const Text('Info'),
+              leading: const Icon(Icons.explore_outlined),
+              title: const Text('Entdecken'),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const InfoScreen()),
+                  MaterialPageRoute(
+                    builder: (context) => const ExploreScreen(),
+                  ),
                 );
               },
             ),
@@ -86,8 +88,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
             label: 'Meine Sets',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.explore_outlined),
-            label: 'Entdecken',
+            icon: Icon(Icons.info_outlined),
+            label: 'Info',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person_outlined),
