@@ -32,4 +32,3 @@ Vor dem Starten deshalb die Abhängigkeiten installieren, damit es funktioniert.
    ```
    flutter run
    ```
-# lernkartep_app
