@@ -80,7 +80,17 @@ class StudyCardListScreen extends StatelessWidget {
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 12),
-          const Text('Tippen zum Umdrehen', style: TextStyle(fontSize: 11)),
+          const Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.touch_app_outlined, size: 16, color: Colors.black45),
+              SizedBox(width: 6),
+              Text(
+                'Tippen zum Umdrehen',
+                style: TextStyle(fontSize: 11, color: Colors.black45),
+              ),
+            ],
+          ),
         ],
       ),
     );

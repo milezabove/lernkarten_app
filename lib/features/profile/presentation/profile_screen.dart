@@ -37,7 +37,7 @@ class ProfileScreen extends StatelessWidget {
             const SizedBox(height: 16),
             Row(
               children: [
-                Icon(Icons.school, size: 22, color: Colors.grey),
+                Icon(Icons.school),
                 const SizedBox(width: 16),
                 const Text('Berner Fachhochschule'),
               ],
@@ -45,7 +45,7 @@ class ProfileScreen extends StatelessWidget {
             const SizedBox(height: 20),
             Row(
               children: [
-                Icon(Icons.calendar_today, size: 22, color: Colors.grey),
+                Icon(Icons.calendar_today),
                 const SizedBox(width: 16),
                 const Text('Mitglied seit 2026'),
               ],
@@ -53,7 +53,7 @@ class ProfileScreen extends StatelessWidget {
             const SizedBox(height: 20),
             Row(
               children: [
-                Icon(Icons.style_outlined, size: 22, color: Colors.grey),
+                Icon(Icons.folder_open),
                 const SizedBox(width: 16),
                 const Text('3 Lernkartensets erstellt'),
               ],

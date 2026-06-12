@@ -21,7 +21,7 @@ class StudyCardSetListScreen extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
-            leading: const Icon(Icons.view_list),
+            leading: const Icon(Icons.style_outlined),
             title: Text(studyCardSet.title),
             subtitle: Text(studyCardSet.description),
             trailing: const Icon(Icons.chevron_right),

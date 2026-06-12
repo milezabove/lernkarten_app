@@ -84,7 +84,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
         },
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.style_outlined),
+            icon: Icon(Icons.folder_open_outlined),
             label: 'Meine Sets',
           ),
           BottomNavigationBarItem(
