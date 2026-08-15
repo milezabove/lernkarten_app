@@ -1,6 +1,7 @@
 import 'package:flip_card_plus/flip_card_plus.dart';
 import 'package:flutter/material.dart';
 import '../domain/study_card_set.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 class StudyCardListScreen extends StatelessWidget {
   final StudyCardSet studyCardSet;
@@ -35,12 +36,65 @@ class StudyCardListScreen extends StatelessWidget {
               itemCount: studyCardSet.studyCards.length,
               itemBuilder: (context, index) {
                 final card = studyCardSet.studyCards[index];
+
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 12),
-                  child: FlipCardPlus(
-                    direction: Axis.horizontal,
-                    front: _cardSide(label: 'FRAGE', text: card.title),
-                    back: _cardSide(label: 'ANTWORT', text: card.description),
+                  child: Slidable(
+                    key: ValueKey(index),
+                    endActionPane: ActionPane(
+                      motion: const DrawerMotion(),
+                      extentRatio: 0.42,
+                      children: [
+                        CustomSlidableAction(
+                          onPressed: (context) {
+                            print('Bearbeiten');
+                          },
+                          backgroundColor: Colors.transparent,
+                          foregroundColor: const Color(0xFF8B7AB8),
+                          child: const Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.edit_outlined, size: 25),
+                              SizedBox(height: 6),
+                              Text(
+                                'Bearbeiten',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        CustomSlidableAction(
+                          onPressed: (context) {
+                            print('Löschen');
+                          },
+                          backgroundColor: Colors.transparent,
+                          foregroundColor: const Color(0xFFD48787),
+                          child: const Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.delete_outline_rounded, size: 25),
+                              SizedBox(height: 6),
+                              Text(
+                                'Löschen',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    child: FlipCardPlus(
+                      direction: Axis.horizontal,
+                      front: _cardSide(label: 'FRAGE', text: card.title),
+                      back: _cardSide(label: 'ANTWORT', text: card.description),
+                    ),
                   ),
                 );
               },
