@@ -1,6 +1,7 @@
 class StudyCard {
-  final String title;
-  final String description;
+  final String id;
+  final String answer;
+  final String question;
 
-  const StudyCard({required this.title, required this.description});
+  const StudyCard({this.id = '', required this.answer, required this.question});
 }

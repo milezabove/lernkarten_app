@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "309890561672",
+    "project_id": "lernkarten-app-5de8e",
+    "storage_bucket": "lernkarten-app-5de8e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:309890561672:android:0b33b854322de244d7513d",
+        "android_client_info": {
+          "package_name": "com.example.lernkarten_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCWeB60PUgjBD7QymNEQb66bW8hUiSi98Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
