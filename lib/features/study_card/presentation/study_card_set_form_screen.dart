@@ -105,17 +105,6 @@ class _StudyCardSetFormScreenState extends State<StudyCardSetFormScreen> {
                   border: OutlineInputBorder(),
                   hintText: 'Kurze Beschreibung',
                 ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Bitte eine Beschreibung eingeben.';
-                  }
-
-                  if (value.trim().length > 50) {
-                    return 'Die Beschreibung darf maximal 50 Zeichen haben.';
-                  }
-
-                  return null;
-                },
               ),
 
               const SizedBox(height: 16),

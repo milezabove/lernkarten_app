@@ -160,8 +160,6 @@ class _StudyCardSetListScreenState extends State<StudyCardSetListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Meine Sets'), centerTitle: true),
-
-      // CREATE
       floatingActionButton: FloatingActionButton(
         onPressed: _createSet,
         child: const Icon(Icons.add),
@@ -214,17 +212,6 @@ class _StudyCardSetListScreenState extends State<StudyCardSetListScreen> {
                       'Noch keine Lernkartensets '
                       'vorhanden.',
                       textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      'Erstelle dein erstes Set.',
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 16),
-                    ElevatedButton.icon(
-                      onPressed: _createSet,
-                      icon: const Icon(Icons.add),
-                      label: const Text('Set erstellen'),
                     ),
                   ],
                 ),
@@ -303,7 +290,12 @@ class _StudyCardSetListScreenState extends State<StudyCardSetListScreen> {
                     child: ListTile(
                       tileColor: Colors.transparent,
 
-                      leading: const Icon(Icons.style_outlined),
+                      leading: Icon(
+                        studyCardSet.isPublic
+                            ? Icons.public
+                            : Icons.lock_outline,
+                        color: Colors.deepPurple.shade400,
+                      ),
 
                       title: Text(studyCardSet.title),
 

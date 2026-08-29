@@ -212,7 +212,7 @@ class _StudyCardListScreenState extends State<StudyCardListScreen> {
                     Text(widget.studyCardSet.description),
                     const SizedBox(height: 6),
                     Text(
-                      '${cards.length} Karten',
+                      '${cards.length} ${cards.length == 1 ? 'Karte' : 'Karten'}',
                       style: TextStyle(color: Colors.deepPurple.shade400),
                     ),
                   ],
