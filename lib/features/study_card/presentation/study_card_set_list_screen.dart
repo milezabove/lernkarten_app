@@ -16,20 +16,6 @@ class StudyCardSetListScreen extends StatefulWidget {
 class _StudyCardSetListScreenState extends State<StudyCardSetListScreen> {
   final StudyCardRepository repository = StudyCardRepository();
 
-  late Future<List<StudyCardSet>> setsFuture;
-
-  @override
-  void initState() {
-    super.initState();
-    setsFuture = repository.getStudyCardSets();
-  }
-
-  void _reloadSets() {
-    setState(() {
-      setsFuture = repository.getStudyCardSets();
-    });
-  }
-
   Future<void> _createSet() async {
     final newSet = await Navigator.push<StudyCardSet>(
       context,
@@ -46,8 +32,6 @@ class _StudyCardSetListScreenState extends State<StudyCardSetListScreen> {
       if (!mounted) {
         return;
       }
-
-      _reloadSets();
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Lernkartenset wurde erstellt.')),
@@ -82,8 +66,6 @@ class _StudyCardSetListScreenState extends State<StudyCardSetListScreen> {
       if (!mounted) {
         return;
       }
-
-      _reloadSets();
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Lernkartenset wurde aktualisiert.')),
@@ -140,8 +122,6 @@ class _StudyCardSetListScreenState extends State<StudyCardSetListScreen> {
         return;
       }
 
-      _reloadSets();
-
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Lernkartenset wurde gelöscht.')),
       );
@@ -160,36 +140,34 @@ class _StudyCardSetListScreenState extends State<StudyCardSetListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Meine Sets'), centerTitle: true),
+
       floatingActionButton: FloatingActionButton(
         onPressed: _createSet,
         child: const Icon(Icons.add),
       ),
 
-      body: FutureBuilder<List<StudyCardSet>>(
-        future: setsFuture,
+      body: StreamBuilder<List<StudyCardSet>>(
+        stream: repository.watchStudyCardSets(),
+
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+          if (snapshot.connectionState == ConnectionState.waiting &&
+              !snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
           }
 
           if (snapshot.hasError) {
-            return Center(
+            return const Center(
               child: Padding(
-                padding: const EdgeInsets.all(24),
+                padding: EdgeInsets.all(24),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.error_outline, size: 48),
-                    const SizedBox(height: 16),
-                    const Text(
+                    Icon(Icons.error_outline, size: 48),
+                    SizedBox(height: 16),
+                    Text(
                       'Die Lernkartensets konnten '
                       'nicht geladen werden.',
                       textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: _reloadSets,
-                      child: const Text('Erneut versuchen'),
                     ),
                   ],
                 ),
@@ -200,15 +178,15 @@ class _StudyCardSetListScreenState extends State<StudyCardSetListScreen> {
           final sets = snapshot.data ?? [];
 
           if (sets.isEmpty) {
-            return Center(
+            return const Center(
               child: Padding(
-                padding: const EdgeInsets.all(24),
+                padding: EdgeInsets.all(24),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.folder_copy_outlined, size: 60),
-                    const SizedBox(height: 16),
-                    const Text(
+                    Icon(Icons.folder_copy_outlined, size: 60),
+                    SizedBox(height: 16),
+                    Text(
                       'Noch keine Lernkartensets '
                       'vorhanden.',
                       textAlign: TextAlign.center,
@@ -221,19 +199,24 @@ class _StudyCardSetListScreenState extends State<StudyCardSetListScreen> {
 
           return ListView.separated(
             padding: const EdgeInsets.all(16),
+
             itemCount: sets.length,
+
             separatorBuilder: (context, index) => const SizedBox(height: 10),
+
             itemBuilder: (context, index) {
               final studyCardSet = sets[index];
 
               return ClipRRect(
                 borderRadius: BorderRadius.circular(12),
+
                 child: Slidable(
                   key: ValueKey(studyCardSet.id),
 
                   endActionPane: ActionPane(
                     motion: const DrawerMotion(),
                     extentRatio: 0.42,
+
                     children: [
                       CustomSlidableAction(
                         onPressed: (context) {
@@ -283,13 +266,13 @@ class _StudyCardSetListScreenState extends State<StudyCardSetListScreen> {
 
                   child: Container(
                     width: double.infinity,
+
                     decoration: BoxDecoration(
                       color: Colors.deepPurple.shade100,
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: ListTile(
-                      tileColor: Colors.transparent,
 
+                    child: ListTile(
                       leading: Icon(
                         studyCardSet.isPublic
                             ? Icons.public

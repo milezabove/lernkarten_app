@@ -6,6 +6,7 @@ import '../data/study_card_repository.dart';
 import '../domain/study_card.dart';
 import '../domain/study_card_set.dart';
 import 'study_card_form_screen.dart';
+import 'quiz_screen.dart';
 
 class StudyCardListScreen extends StatefulWidget {
   final StudyCardSet studyCardSet;
@@ -210,10 +211,39 @@ class _StudyCardListScreenState extends State<StudyCardListScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(widget.studyCardSet.description),
+
                     const SizedBox(height: 6),
+
                     Text(
-                      '${cards.length} ${cards.length == 1 ? 'Karte' : 'Karten'}',
+                      '${cards.length} '
+                      '${cards.length == 1 ? 'Karte' : 'Karten'}',
                       style: TextStyle(color: Colors.deepPurple.shade400),
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    SizedBox(
+                      width: double.infinity,
+                      child: FilledButton.icon(
+                        // No quiz possible when the set has no cards.
+                        onPressed: cards.isEmpty
+                            ? null
+                            : () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => QuizScreen(
+                                      title: widget.studyCardSet.title,
+                                      cards: cards,
+                                    ),
+                                  ),
+                                );
+                              },
+
+                        icon: const Icon(Icons.quiz_outlined),
+
+                        label: const Text('Quiz starten'),
+                      ),
                     ),
                   ],
                 ),
