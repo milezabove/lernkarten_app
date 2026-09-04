@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import '../domain/study_card.dart';
 import '../domain/study_card_set.dart';
@@ -7,7 +8,16 @@ class StudyCardRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   CollectionReference<Map<String, dynamic>> get _sets {
-    return _firestore.collection('studyCardSets');
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) {
+      throw Exception('Kein Benutzer angemeldet');
+    }
+
+    return FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .collection('studyCardSets');
   }
 
   Future<List<StudyCardSet>> getStudyCardSets() async {

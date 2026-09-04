@@ -56,7 +56,6 @@ class DefaultFirebaseOptions {
     projectId: 'lernkarten-app-5de8e',
     storageBucket: 'lernkarten-app-5de8e.firebasestorage.app',
   );
-
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyAdSNcd5fgw4MBkMVl0OBF--qFuoHyOmuI',
     appId: '1:309890561672:ios:13072eb34b260d44d7513d',

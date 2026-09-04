@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -5,58 +6,34 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Profil'), centerTitle: true),
+      appBar: AppBar(title: const Text('Profil')),
       body: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const SizedBox(height: 16),
-            CircleAvatar(
-              radius: 48,
-              backgroundColor: Colors.deepPurple.shade100,
-              child: Icon(
-                Icons.person,
-                size: 48,
-                color: Colors.deepPurple.shade400,
-              ),
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'Luca Maurer',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 4),
             Text(
-              'luca.maurer@gmail.com',
-              style: TextStyle(fontSize: 15, color: Colors.grey.shade600),
+              user.email ?? 'Keine E-Mail',
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 32),
-            const Divider(),
+
             const SizedBox(height: 16),
-            Row(
-              children: [
-                Icon(Icons.school),
-                const SizedBox(width: 16),
-                const Text('Berner Fachhochschule'),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                Icon(Icons.calendar_today),
-                const SizedBox(width: 16),
-                const Text('Mitglied seit 2026'),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                Icon(Icons.folder_open),
-                const SizedBox(width: 16),
-                const Text('3 Lernkartensets erstellt'),
-              ],
+
+            Text('UID: ${user.uid}'),
+
+            const SizedBox(height: 32),
+
+            ElevatedButton(
+              onPressed: () async {
+                await FirebaseAuth.instance.signOut();
+              },
+              child: const Text('Ausloggen'),
             ),
           ],
         ),
