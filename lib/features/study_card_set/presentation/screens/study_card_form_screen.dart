@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../domain/study_card.dart';
+import '../../domain/study_card.dart';
 
 class StudyCardFormScreen extends StatefulWidget {
   final StudyCard? studyCard;
@@ -16,6 +15,8 @@ class _StudyCardFormScreenState extends State<StudyCardFormScreen> {
 
   late final TextEditingController questionController;
   late final TextEditingController answerController;
+
+  bool isSubmitting = false;
 
   bool get isEditing => widget.studyCard != null;
 
@@ -33,9 +34,17 @@ class _StudyCardFormScreenState extends State<StudyCardFormScreen> {
   }
 
   void _saveCard() {
+    if (isSubmitting) {
+      return;
+    }
+
     if (!formKey.currentState!.validate()) {
       return;
     }
+
+    setState(() {
+      isSubmitting = true;
+    });
 
     final card = StudyCard(
       id: widget.studyCard?.id ?? '',
@@ -59,14 +68,18 @@ class _StudyCardFormScreenState extends State<StudyCardFormScreen> {
       appBar: AppBar(
         title: Text(isEditing ? 'Lernkarte bearbeiten' : 'Neue Lernkarte'),
       ),
+
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
+
         child: Form(
           key: formKey,
+
           child: Column(
             children: [
               TextFormField(
                 controller: questionController,
+                enabled: !isSubmitting,
                 maxLength: 80,
                 maxLines: 1,
                 decoration: const InputDecoration(
@@ -74,6 +87,7 @@ class _StudyCardFormScreenState extends State<StudyCardFormScreen> {
                   border: OutlineInputBorder(),
                   hintText: 'Frage eingeben',
                 ),
+
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
                     return 'Bitte eine Frage eingeben.';
@@ -91,13 +105,18 @@ class _StudyCardFormScreenState extends State<StudyCardFormScreen> {
 
               TextFormField(
                 controller: answerController,
+
+                enabled: !isSubmitting,
+
                 maxLength: 80,
                 maxLines: 1,
+
                 decoration: const InputDecoration(
                   labelText: 'Antwort',
                   border: OutlineInputBorder(),
                   hintText: 'Antwort eingeben',
                 ),
+
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
                     return 'Bitte eine Antwort eingeben.';
@@ -116,7 +135,7 @@ class _StudyCardFormScreenState extends State<StudyCardFormScreen> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: _saveCard,
+                  onPressed: isSubmitting ? null : _saveCard,
                   child: Text(
                     isEditing ? 'Änderungen speichern' : 'Lernkarte erstellen',
                   ),

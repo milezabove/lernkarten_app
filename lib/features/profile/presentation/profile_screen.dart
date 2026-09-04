@@ -9,33 +9,100 @@ class ProfileScreen extends StatelessWidget {
     final user = FirebaseAuth.instance.currentUser;
 
     if (user == null) {
-      return const Center(child: CircularProgressIndicator());
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Profil')),
-      body: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          children: [
-            Text(
-              user.email ?? 'Keine E-Mail',
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
+      appBar: AppBar(title: const Text('Profil'), centerTitle: true),
 
-            const SizedBox(height: 16),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            children: [
+              const SizedBox(height: 16),
 
-            Text('UID: ${user.uid}'),
+              CircleAvatar(
+                radius: 46,
+                backgroundColor: Colors.deepPurple.shade100,
+                child: Icon(
+                  Icons.person,
+                  size: 46,
+                  color: Colors.deepPurple.shade500,
+                ),
+              ),
 
-            const SizedBox(height: 32),
+              const SizedBox(height: 20),
 
-            ElevatedButton(
-              onPressed: () async {
-                await FirebaseAuth.instance.signOut();
-              },
-              child: const Text('Ausloggen'),
-            ),
-          ],
+              Text(
+                user.email ?? 'Keine E-Mail',
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+
+              const SizedBox(height: 6),
+
+              Text(
+                'Angemeldeter Benutzer',
+                style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+              ),
+
+              const SizedBox(height: 32),
+
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(18),
+                decoration: BoxDecoration(
+                  color: Colors.deepPurple.shade50,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: Colors.deepPurple.shade100),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Benutzer-ID',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey.shade600,
+                      ),
+                    ),
+
+                    const SizedBox(height: 6),
+
+                    SelectableText(
+                      user.uid,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const Spacer(),
+
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed: () async {
+                    await FirebaseAuth.instance.signOut();
+                  },
+                  icon: const Icon(Icons.logout),
+                  label: const Text('Ausloggen'),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    foregroundColor: Colors.red.shade700,
+                    side: BorderSide(color: Colors.red.shade200),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

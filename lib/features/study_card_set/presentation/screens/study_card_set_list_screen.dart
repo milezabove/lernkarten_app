@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 
-import '../data/study_card_repository.dart';
-import '../domain/study_card_set.dart';
+import '../../data/study_card_repository.dart';
+import '../../domain/study_card_set.dart';
+import '../widgets/study_card_set_tile.dart';
 import 'study_card_set_detail_screen.dart';
 import 'study_card_set_form_screen.dart';
 
@@ -16,15 +16,27 @@ class StudyCardSetListScreen extends StatefulWidget {
 class _StudyCardSetListScreenState extends State<StudyCardSetListScreen> {
   final StudyCardRepository repository = StudyCardRepository();
 
+  bool isCreatingSet = false;
+  String? busySetId;
+  bool get isWriting => isCreatingSet || busySetId != null;
+
   Future<void> _createSet() async {
+    if (isWriting) {
+      return;
+    }
+
     final newSet = await Navigator.push<StudyCardSet>(
       context,
       MaterialPageRoute(builder: (context) => const StudyCardSetFormScreen()),
     );
 
-    if (newSet == null) {
+    if (newSet == null || !mounted) {
       return;
     }
+
+    setState(() {
+      isCreatingSet = true;
+    });
 
     try {
       await repository.createStudyCardSet(newSet);
@@ -41,13 +53,28 @@ class _StudyCardSetListScreenState extends State<StudyCardSetListScreen> {
         return;
       }
 
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Fehler beim Erstellen: $error')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Serverseitiger Fehler beim Erstellen. '
+            'Probiere es später erneut.',
+          ),
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          isCreatingSet = false;
+        });
+      }
     }
   }
 
   Future<void> _editSet(StudyCardSet studyCardSet) async {
+    if (isWriting) {
+      return;
+    }
+
     final updatedSet = await Navigator.push<StudyCardSet>(
       context,
       MaterialPageRoute(
@@ -56,9 +83,13 @@ class _StudyCardSetListScreenState extends State<StudyCardSetListScreen> {
       ),
     );
 
-    if (updatedSet == null) {
+    if (updatedSet == null || !mounted) {
       return;
     }
+
+    setState(() {
+      busySetId = studyCardSet.id;
+    });
 
     try {
       await repository.updateStudyCardSet(updatedSet);
@@ -75,13 +106,28 @@ class _StudyCardSetListScreenState extends State<StudyCardSetListScreen> {
         return;
       }
 
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Fehler beim Bearbeiten: $error')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Serverseitiger Fehler beim Bearbeiten. '
+            'Probiere es später erneut.',
+          ),
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          busySetId = null;
+        });
+      }
     }
   }
 
   Future<void> _deleteSet(StudyCardSet studyCardSet) async {
+    if (isWriting) {
+      return;
+    }
+
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) {
@@ -111,9 +157,13 @@ class _StudyCardSetListScreenState extends State<StudyCardSetListScreen> {
       },
     );
 
-    if (confirmed != true) {
+    if (confirmed != true || !mounted) {
       return;
     }
+
+    setState(() {
+      busySetId = studyCardSet.id;
+    });
 
     try {
       await repository.deleteStudyCardSet(studyCardSet.id);
@@ -130,9 +180,20 @@ class _StudyCardSetListScreenState extends State<StudyCardSetListScreen> {
         return;
       }
 
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Fehler beim Löschen: $error')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Serverseitiger Fehler beim Löschen. '
+            'Probiere es später erneut.',
+          ),
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          busySetId = null;
+        });
+      }
     }
   }
 
@@ -142,8 +203,15 @@ class _StudyCardSetListScreenState extends State<StudyCardSetListScreen> {
       appBar: AppBar(title: const Text('Meine Sets'), centerTitle: true),
 
       floatingActionButton: FloatingActionButton(
-        onPressed: _createSet,
-        child: const Icon(Icons.add),
+        onPressed: isWriting ? null : _createSet,
+
+        child: isCreatingSet
+            ? const SizedBox(
+                width: 22,
+                height: 22,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            : const Icon(Icons.add),
       ),
 
       body: StreamBuilder<List<StudyCardSet>>(
@@ -207,97 +275,30 @@ class _StudyCardSetListScreenState extends State<StudyCardSetListScreen> {
             itemBuilder: (context, index) {
               final studyCardSet = sets[index];
 
-              return ClipRRect(
-                borderRadius: BorderRadius.circular(12),
+              return StudyCardSetTile(
+                studyCardSet: studyCardSet,
 
-                child: Slidable(
-                  key: ValueKey(studyCardSet.id),
+                isBusy: busySetId == studyCardSet.id,
 
-                  endActionPane: ActionPane(
-                    motion: const DrawerMotion(),
-                    extentRatio: 0.42,
+                writeLocked: isWriting,
 
-                    children: [
-                      CustomSlidableAction(
-                        onPressed: (context) {
-                          _editSet(studyCardSet);
-                        },
-                        backgroundColor: Colors.transparent,
-                        foregroundColor: const Color(0xFF8B7AB8),
-                        child: const Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.edit_outlined, size: 25),
-                            SizedBox(height: 6),
-                            Text(
-                              'Bearbeiten',
-                              style: TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      CustomSlidableAction(
-                        onPressed: (context) {
-                          _deleteSet(studyCardSet);
-                        },
-                        backgroundColor: Colors.transparent,
-                        foregroundColor: const Color(0xFFD48787),
-                        child: const Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.delete_outline_rounded, size: 25),
-                            SizedBox(height: 6),
-                            Text(
-                              'Löschen',
-                              style: TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  child: Container(
-                    width: double.infinity,
-
-                    decoration: BoxDecoration(
-                      color: Colors.deepPurple.shade100,
-                      borderRadius: BorderRadius.circular(12),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          StudyCardListScreen(studyCardSet: studyCardSet),
                     ),
+                  );
+                },
 
-                    child: ListTile(
-                      leading: Icon(
-                        studyCardSet.isPublic
-                            ? Icons.public
-                            : Icons.lock_outline,
-                        color: Colors.deepPurple.shade400,
-                      ),
+                onEdit: () {
+                  _editSet(studyCardSet);
+                },
 
-                      title: Text(studyCardSet.title),
-
-                      subtitle: Text(studyCardSet.description),
-
-                      trailing: const Icon(Icons.chevron_right),
-
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                StudyCardListScreen(studyCardSet: studyCardSet),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ),
+                onDelete: () {
+                  _deleteSet(studyCardSet);
+                },
               );
             },
           );

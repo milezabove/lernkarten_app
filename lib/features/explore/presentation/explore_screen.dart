@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../study_card/data/study_card_repository.dart';
-import '../../study_card/domain/study_card_set.dart';
-import 'public_study_card_set_detail_screen.dart';
+import '../../study_card_set/data/study_card_repository.dart';
+import '../../study_card_set/domain/study_card_set.dart';
+import 'explore_detail_screen.dart';
 
 class ExploreScreen extends StatefulWidget {
   const ExploreScreen({super.key});
@@ -124,9 +124,8 @@ class _ExploreScreenState extends State<ExploreScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => PublicStudyCardSetDetailScreen(
-                            studyCardSet: studyCardSet,
-                          ),
+                          builder: (context) =>
+                              ExploreDetailScreen(studyCardSet: studyCardSet),
                         ),
                       );
                     },

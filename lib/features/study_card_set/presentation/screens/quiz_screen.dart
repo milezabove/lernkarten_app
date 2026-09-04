@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../domain/study_card.dart';
+import '../../domain/study_card.dart';
 
 class QuizScreen extends StatefulWidget {
   final String title;
@@ -62,10 +61,6 @@ class _QuizScreenState extends State<QuizScreen> {
     }
   }
 
-  // ------------------------------------------------------------
-  // CHECK ANSWER
-  // ------------------------------------------------------------
-
   void _checkAnswer() {
     if (answerChecked) {
       return;
@@ -87,15 +82,9 @@ class _QuizScreenState extends State<QuizScreen> {
     });
   }
 
-  // Makes answers a little more forgiving:
-  // "Paris", "paris" and " PARIS " are treated as equal.
   String _normalize(String value) {
     return value.trim().toLowerCase().replaceAll(RegExp(r'\s+'), ' ');
   }
-
-  // ------------------------------------------------------------
-  // NEXT QUESTION
-  // ------------------------------------------------------------
 
   void _nextQuestion() {
     if (currentIndex >= widget.cards.length - 1) {
@@ -108,25 +97,17 @@ class _QuizScreenState extends State<QuizScreen> {
 
     setState(() {
       currentIndex++;
-
       answerController.clear();
-
       answerChecked = false;
       currentAnswerCorrect = false;
     });
   }
 
-  // ------------------------------------------------------------
-  // RESTART
-  // ------------------------------------------------------------
-
   void _restartQuiz() {
     setState(() {
       currentIndex = 0;
       correctAnswers = 0;
-
       answerController.clear();
-
       answerChecked = false;
       currentAnswerCorrect = false;
       quizFinished = false;
@@ -138,10 +119,6 @@ class _QuizScreenState extends State<QuizScreen> {
     answerController.dispose();
     super.dispose();
   }
-
-  // ------------------------------------------------------------
-  // BUILD
-  // ------------------------------------------------------------
 
   @override
   Widget build(BuildContext context) {
@@ -169,10 +146,6 @@ class _QuizScreenState extends State<QuizScreen> {
     );
   }
 
-  // ------------------------------------------------------------
-  // QUESTION SCREEN
-  // ------------------------------------------------------------
-
   Widget _buildQuestion() {
     final progress =
         (currentIndex + (answerChecked ? 1 : 0)) / widget.cards.length;
@@ -182,7 +155,6 @@ class _QuizScreenState extends State<QuizScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Question counter
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -209,7 +181,6 @@ class _QuizScreenState extends State<QuizScreen> {
 
           const SizedBox(height: 32),
 
-          // QUESTION
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(28),
@@ -264,7 +235,6 @@ class _QuizScreenState extends State<QuizScreen> {
 
           const SizedBox(height: 20),
 
-          // BEFORE ANSWER WAS CHECKED
           if (!answerChecked)
             FilledButton.icon(
               onPressed: _checkAnswer,
@@ -272,12 +242,9 @@ class _QuizScreenState extends State<QuizScreen> {
               label: const Text('Antwort prüfen'),
             ),
 
-          // AFTER CHECKING
           if (answerChecked) ...[
             _buildAnswerFeedback(),
-
             const SizedBox(height: 20),
-
             FilledButton.icon(
               onPressed: _nextQuestion,
 
@@ -298,10 +265,6 @@ class _QuizScreenState extends State<QuizScreen> {
       ),
     );
   }
-
-  // ------------------------------------------------------------
-  // CORRECT / WRONG FEEDBACK
-  // ------------------------------------------------------------
 
   Widget _buildAnswerFeedback() {
     return Container(
@@ -363,13 +326,8 @@ class _QuizScreenState extends State<QuizScreen> {
     );
   }
 
-  // ------------------------------------------------------------
-  // FINAL RESULT
-  // ------------------------------------------------------------
-
   Widget _buildResult() {
     final total = widget.cards.length;
-
     final percentage = total == 0
         ? 0
         : ((correctAnswers / total) * 100).round();
@@ -377,7 +335,7 @@ class _QuizScreenState extends State<QuizScreen> {
     String evaluation;
 
     if (percentage >= 90) {
-      evaluation = 'Ausgezeichnet!';
+      evaluation = 'Perfekt!';
     } else if (percentage >= 75) {
       evaluation = 'Sehr gut!';
     } else if (percentage >= 60) {
@@ -422,9 +380,7 @@ class _QuizScreenState extends State<QuizScreen> {
                   ),
 
                   const SizedBox(height: 6),
-
                   const Text('richtige Antworten'),
-
                   const SizedBox(height: 24),
 
                   Text(

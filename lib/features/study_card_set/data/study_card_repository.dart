@@ -7,10 +7,6 @@ import '../domain/study_card_set.dart';
 class StudyCardRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // ------------------------------------------------------------
-  // CURRENT USER
-  // ------------------------------------------------------------
-
   User get _currentUser {
     final user = FirebaseAuth.instance.currentUser;
 
@@ -21,22 +17,12 @@ class StudyCardRepository {
     return user;
   }
 
-  // ------------------------------------------------------------
-  // MY SETS
-  // users/{userId}/studyCardSets
-  // ------------------------------------------------------------
-
   CollectionReference<Map<String, dynamic>> get _sets {
     return _firestore
         .collection('users')
         .doc(_currentUser.uid)
         .collection('studyCardSets');
   }
-
-  // ------------------------------------------------------------
-  // PUBLIC SETS
-  // publicStudyCardSets/{userId_setId}
-  // ------------------------------------------------------------
 
   CollectionReference<Map<String, dynamic>> get _publicSets {
     return _firestore.collection('publicStudyCardSets');
@@ -48,10 +34,6 @@ class StudyCardRepository {
   ) {
     return _publicSets.doc('${userId}_$setId');
   }
-
-  // ============================================================
-  // MY SETS
-  // ============================================================
 
   Future<List<StudyCardSet>> getStudyCardSets() async {
     final snapshot = await _sets.get();
@@ -68,8 +50,6 @@ class StudyCardRepository {
     }).toList();
   }
 
-  // Stream so copied Explore sets appear automatically
-  // in "Meine Sets".
   Stream<List<StudyCardSet>> watchStudyCardSets() {
     return _sets.snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
@@ -92,7 +72,6 @@ class StudyCardRepository {
       'isPublic': studyCardSet.isPublic,
     });
 
-    // If the user creates it as public, publish a copy.
     if (studyCardSet.isPublic) {
       await _syncPublicSet(docRef.id);
     }
@@ -106,16 +85,13 @@ class StudyCardRepository {
     });
 
     if (studyCardSet.isPublic) {
-      // Update the published version.
       await _syncPublicSet(studyCardSet.id);
     } else {
-      // Set is private now -> remove it from Explore.
       await _deletePublicSnapshot(studyCardSet.id);
     }
   }
 
   Future<void> deleteStudyCardSet(String setId) async {
-    // Remove published version first, if there is one.
     await _deletePublicSnapshot(setId);
 
     final studyCardsSnapshot = await _sets
@@ -133,10 +109,6 @@ class StudyCardRepository {
 
     await batch.commit();
   }
-
-  // ============================================================
-  // MY CARDS
-  // ============================================================
 
   Future<List<StudyCard>> getCards(String setId) async {
     final snapshot = await _sets.doc(setId).collection('studyCards').get();
@@ -158,7 +130,6 @@ class StudyCardRepository {
       'answer': card.answer,
     });
 
-    // If this set is public, update its Explore copy.
     if (await _isSetPublic(setId)) {
       await _syncPublicSet(setId);
     }
@@ -195,13 +166,6 @@ class StudyCardRepository {
     return data?['isPublic'] as bool? ?? false;
   }
 
-  // ============================================================
-  // PUBLISH / EXPLORE
-  // ============================================================
-
-  /// Copies the owner's current set into publicStudyCardSets.
-  ///
-  /// This is the public Explore version.
   Future<void> _syncPublicSet(String setId) async {
     final userId = _currentUser.uid;
 
@@ -227,23 +191,16 @@ class StudyCardRepository {
 
     final publicSetRef = _publicSetReference(userId, setId);
 
-    // First create/update the public parent document.
     await publicSetRef.set({
       'title': setData['title'] as String? ?? '',
       'description': setData['description'] as String? ?? '',
       'isPublic': true,
-
-      // Used by Firestore Security Rules.
       'ownerId': userId,
-
       'updatedAt': FieldValue.serverTimestamp(),
     });
 
-    // Delete the old public cards.
     final oldPublicCards = await publicSetRef.collection('studyCards').get();
-
     final batch = _firestore.batch();
-
     var hasWrites = false;
 
     for (final oldCard in oldPublicCards.docs) {
@@ -251,7 +208,6 @@ class StudyCardRepository {
       hasWrites = true;
     }
 
-    // Copy the current cards into the public snapshot.
     for (final privateCard in privateCardsSnapshot.docs) {
       final data = privateCard.data();
 
@@ -296,10 +252,6 @@ class StudyCardRepository {
     await batch.commit();
   }
 
-  // ============================================================
-  // READ EXPLORE
-  // ============================================================
-
   Future<List<StudyCardSet>> getPublicStudyCardSets() async {
     final snapshot = await _publicSets.get();
 
@@ -332,13 +284,6 @@ class StudyCardRepository {
     }).toList();
   }
 
-  // ============================================================
-  // COPY PUBLIC SET INTO MY SETS
-  // ============================================================
-
-  /// Makes a completely independent private copy.
-  ///
-  /// Later changes to the public/original set will NOT affect this copy.
   Future<void> copyPublicSetToMySets(String publicSetId) async {
     final publicSetRef = _publicSets.doc(publicSetId);
 
@@ -354,24 +299,17 @@ class StudyCardRepository {
         .collection('studyCards')
         .get();
 
-    // IMPORTANT:
-    // A completely NEW document is created in the current user's area.
     final newPrivateSetRef = _sets.doc();
-
     final batch = _firestore.batch();
 
     batch.set(newPrivateSetRef, {
       'title': publicSetData['title'] as String? ?? '',
       'description': publicSetData['description'] as String? ?? '',
-
-      // Copied sets are private by default.
       'isPublic': false,
     });
 
-    // Also create completely NEW card documents.
     for (final publicCard in publicCardsSnapshot.docs) {
       final cardData = publicCard.data();
-
       final newPrivateCardRef = newPrivateSetRef.collection('studyCards').doc();
 
       batch.set(newPrivateCardRef, {
@@ -379,7 +317,6 @@ class StudyCardRepository {
         'answer': cardData['answer'] as String? ?? '',
       });
     }
-
     await batch.commit();
   }
 }

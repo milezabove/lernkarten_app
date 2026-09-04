@@ -1,22 +1,20 @@
 import 'package:flip_card_plus/flip_card_plus.dart';
 import 'package:flutter/material.dart';
 
-import '../../study_card/data/study_card_repository.dart';
-import '../../study_card/domain/study_card.dart';
-import '../../study_card/domain/study_card_set.dart';
+import '../../study_card_set/data/study_card_repository.dart';
+import '../../study_card_set/domain/study_card.dart';
+import '../../study_card_set/domain/study_card_set.dart';
 
-class PublicStudyCardSetDetailScreen extends StatefulWidget {
+class ExploreDetailScreen extends StatefulWidget {
   final StudyCardSet studyCardSet;
 
-  const PublicStudyCardSetDetailScreen({super.key, required this.studyCardSet});
+  const ExploreDetailScreen({super.key, required this.studyCardSet});
 
   @override
-  State<PublicStudyCardSetDetailScreen> createState() =>
-      _PublicStudyCardSetDetailScreenState();
+  State<ExploreDetailScreen> createState() => _ExploreDetailScreenState();
 }
 
-class _PublicStudyCardSetDetailScreenState
-    extends State<PublicStudyCardSetDetailScreen> {
+class _ExploreDetailScreenState extends State<ExploreDetailScreen> {
   final StudyCardRepository repository = StudyCardRepository();
 
   late Future<List<StudyCard>> cardsFuture;
@@ -67,9 +65,13 @@ class _PublicStudyCardSetDetailScreenState
         return;
       }
 
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Fehler beim Hinzufügen: $error')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Serverseitiger Fehler beim Hinzufügen. Probiere es später erneut.',
+          ),
+        ),
+      );
     } finally {
       if (mounted) {
         setState(() {

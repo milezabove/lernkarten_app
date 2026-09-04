@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:lernkarten_app/features/explore/presentation/explore_screen.dart';
-import '../features/study_card/presentation/study_card_set_list_screen.dart';
+import '../features/study_card_set/presentation/screens/study_card_set_list_screen.dart';
 import '../features/info/presentation/info_screen.dart';
 import '../features/profile/presentation/profile_screen.dart';
 import '../features/settings/presentation/settings_screen.dart';

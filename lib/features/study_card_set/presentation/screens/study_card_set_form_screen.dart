@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../domain/study_card_set.dart';
+import '../../domain/study_card_set.dart';
 
 class StudyCardSetFormScreen extends StatefulWidget {
   final StudyCardSet? studyCardSet;
@@ -15,8 +15,9 @@ class _StudyCardSetFormScreenState extends State<StudyCardSetFormScreen> {
 
   late final TextEditingController titleController;
   late final TextEditingController descriptionController;
-
   late bool isPublic;
+
+  bool isSubmitting = false;
 
   bool get isEditing => widget.studyCardSet != null;
 
@@ -36,9 +37,17 @@ class _StudyCardSetFormScreenState extends State<StudyCardSetFormScreen> {
   }
 
   void _save() {
+    if (isSubmitting) {
+      return;
+    }
+
     if (!formKey.currentState!.validate()) {
       return;
     }
+
+    setState(() {
+      isSubmitting = true;
+    });
 
     final studyCardSet = StudyCardSet(
       id: widget.studyCardSet?.id ?? '',
@@ -66,6 +75,7 @@ class _StudyCardSetFormScreenState extends State<StudyCardSetFormScreen> {
           isEditing ? 'Lernkartenset bearbeiten' : 'Neues Lernkartenset',
         ),
       ),
+
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Form(
@@ -74,13 +84,16 @@ class _StudyCardSetFormScreenState extends State<StudyCardSetFormScreen> {
             children: [
               TextFormField(
                 controller: titleController,
+                enabled: !isSubmitting,
                 maxLength: 20,
                 maxLines: 1,
+
                 decoration: const InputDecoration(
                   labelText: 'Titel',
                   border: OutlineInputBorder(),
                   hintText: 'Titel des Sets',
                 ),
+
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
                     return 'Bitte einen Titel eingeben.';
@@ -98,6 +111,7 @@ class _StudyCardSetFormScreenState extends State<StudyCardSetFormScreen> {
 
               TextFormField(
                 controller: descriptionController,
+                enabled: !isSubmitting,
                 maxLength: 50,
                 maxLines: 1,
                 decoration: const InputDecoration(
@@ -116,19 +130,22 @@ class _StudyCardSetFormScreenState extends State<StudyCardSetFormScreen> {
                   'Andere Benutzer dürfen dieses Set sehen.',
                 ),
                 value: isPublic,
-                onChanged: (value) {
-                  setState(() {
-                    isPublic = value;
-                  });
-                },
+                onChanged: isSubmitting
+                    ? null
+                    : (value) {
+                        setState(() {
+                          isPublic = value;
+                        });
+                      },
               ),
 
               const SizedBox(height: 24),
 
               SizedBox(
                 width: double.infinity,
+
                 child: ElevatedButton(
-                  onPressed: _save,
+                  onPressed: isSubmitting ? null : _save,
                   child: Text(
                     isEditing ? 'Änderungen speichern' : 'Set erstellen',
                   ),
