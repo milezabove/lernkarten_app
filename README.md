@@ -1,6 +1,6 @@
 # Lernkarten-App
 
-Die Lernkarten-App ist eine Flutter-App zum Erstellen und Verwalten von Lernkartensets und Lernkarten.
+Die Lernkarten-App ist eine Flutter-App zum Erstellen und Verwalten von Lernkartensets und Lernkarten. Die App ist mit Firebase und Firestore verbunden. Die FlutterFire-Konfiguration befindet sich in `lib/firebase_options.dart`.
 
 
 ## 1. Welche Daten werden in Firebase gespeichert?
