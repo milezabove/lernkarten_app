@@ -5,7 +5,6 @@ import 'package:lernkarten_app/features/explore/presentation/explore_screen.dart
 import '../features/study_card_set/presentation/screens/study_card_set_list_screen.dart';
 import '../features/info/presentation/info_screen.dart';
 import '../features/profile/presentation/profile_screen.dart';
-import '../features/settings/presentation/settings_screen.dart';
 
 class NavigationScreen extends StatefulWidget {
   const NavigationScreen({super.key});
@@ -36,9 +35,6 @@ class _NavigationScreenState extends State<NavigationScreen> {
         backgroundColor: Colors.deepPurple.shade200,
       ),
 
-      // ----------------------------------------------------------
-      // DRAWER
-      // ----------------------------------------------------------
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
@@ -72,7 +68,6 @@ class _NavigationScreenState extends State<NavigationScreen> {
               },
             ),
 
-            // Info
             ListTile(
               leading: const Icon(Icons.info_outlined),
               title: const Text('Info'),
@@ -86,25 +81,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
               },
             ),
 
-            // Einstellungen
-            ListTile(
-              leading: const Icon(Icons.settings_outlined),
-              title: const Text('Einstellungen'),
-              onTap: () {
-                Navigator.pop(context);
-
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const SettingsScreen(),
-                  ),
-                );
-              },
-            ),
-
             const Divider(),
 
-            // Abmelden
             ListTile(
               leading: const Icon(Icons.logout, color: Colors.red),
               title: const Text(
@@ -117,14 +95,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
         ),
       ),
 
-      // ----------------------------------------------------------
-      // CURRENT SCREEN
-      // ----------------------------------------------------------
       body: screens[currentIndex],
 
-      // ----------------------------------------------------------
-      // BOTTOM NAVIGATION
-      // ----------------------------------------------------------
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentIndex,
         onTap: (index) {
